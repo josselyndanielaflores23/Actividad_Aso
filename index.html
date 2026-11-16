@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Soluciones y Soporte</title>
+    <style>
+        /* =========================================
+           1. VARIABLES Y RESET BÁSICO
+           ========================================= */
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary-color: #0f172a;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth; /* Desplazamiento suave al hacer clic en el menú */
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-light);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* =========================================
+           2. HEADER Y MENÚ DINÁMICO (CSS PURO)
+           ========================================= */
+        header {
+            background-color: var(--bg-white);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--secondary-color);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--primary-color);
+        }
+
+        /* Lista principal del menú */
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.75rem 1.1rem;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        /* Efecto dinámico subrayado animado */
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+            background-color: #eff6ff;
+        }
+
+        .nav-link:hover::after {
+            width: 70%;
+        }
+
+        /* Indicador de submenú */
+        .arrow {
+            font-size: 0.75rem;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item:hover .arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Submenú desplegable dinámico */
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background-color: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            list-style: none;
+            padding: 0.5rem 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(12px);
+            transition: var(--transition);
+        }
+
+        .nav-item:hover .dropdown,
+        .nav-item:focus-within .dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown li a {
+            display: block;
+            padding: 0.65rem 1.25rem;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .dropdown li a:hover {
+            background-color: #eff6ff;
+            color: var(--primary-color);
+            padding-left: 1.5rem; /* Desplazamiento sutil al pasar el cursor */
+        }
+
+        /* Menú hamburguesa para móviles (sin JS usando checkbox hack) */
+        #menu-toggle {
+            display: none;
+        }
+
+        .menu-icon {
+            display: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: var(--secondary-color);
+            user-select: none;
+        }
+
+        /* =========================================
+           3. CONTENIDO PRINCIPAL Y SECCIONES
+           ========================================= */
+        main {
+            flex: 1;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #1e293b 100%);
+            color: var(--bg-white);
+            text-align: center;
+            padding: 5rem 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            max-width: 650px;
+            margin: 0 auto 2rem;
+            color: #cbd5e1;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--bg-white);
+            padding: 0.85rem 1.8rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title p {
+            color: var(--text-muted);
+        }
+
+        /* =========================================
+           4. SECCIÓN: INFORMACIÓN BÁSICA
+           ========================================= */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .info-card {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+        }
+
+        .info-icon {
+            width: 48px;
+            height: 48px;
+            background-color: #dbeafe;
+            color: var(--primary-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 1.25rem;
+        }
+
+        .info-card h3 {
+            color: var(--secondary-color);
+            margin-bottom: 0.75rem;
+        }
+
+        /* =========================================
+           5. SECCIÓN: PROBLEMAS Y SOLUCIONES
+           ========================================= */
+        .solutions-section {
+            background-color: var(--bg-white);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .ps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .ps-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: var(--bg-light);
+            transition: var(--transition);
+        }
+
+        .ps-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .problem-box {
+            background-color: #fef2f2;
+            border-bottom: 1px solid #fee2e2;
+            padding: 1.5rem;
+        }
+
+        .badge-problem {
+            display: inline-block;
+            background-color: #ef4444;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            margin-bottom: 0.6rem;
+        }
+
+        .problem-box h3 {
+            color: #991b1b;
+            font-size: 1.15rem;
+        }
+
+        .solution-box {
+            padding: 1.5rem;
+            background-color: var(--bg-white);
+        }
+
+        .badge-solution {
+            display: inline-block;
+            background-color: #10b981;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            margin-bottom: 0.6rem;
+        }
+
+        /* Acordeón interactivo nativo (<details>) */
+        details {
+            margin-top: 1rem;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 0.75rem;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            list-style: none;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::before {
+            content: '+ ';
+            font-weight: bold;
+        }
+
+        details[open] summary::before {
+            content: '- ';
+        }
+
+        details p {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* =========================================
+           6. FOOTER DE CONTACTO
+           ========================================= */
+        footer {
+            background-color: var(--secondary-color);
+            color: #e2e8f0;
+            padding: 3.5rem 1.5rem 1.5rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2.5rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .footer-col h4 {
+            color: var(--bg-white);
+            font-size: 1.15rem;
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        .footer-col p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .contact-list {
+            list-style: none;
+        }
+
+        .contact-list li {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .contact-list a {
+            color: #93c5fd;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .contact-list a:hover {
+            color: var(--bg-white);
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 1.5rem auto 0;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        /* =========================================
+           7. RESPONSIVE DESIGN (MÓVILES)
+           ========================================= */
+        @media (max-width: 768px) {
+            .menu-icon {
+                display: block;
+            }
+
+            .nav-menu {
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--bg-white);
+                flex-direction: column;
+                align-items: stretch;
+                padding: 1rem 1.5rem;
+                border-bottom: 1px solid var(--border-color);
+                box-shadow: var(--shadow-md);
+                display: none;
+            }
+
+            /* Muestra el menú cuando el checkbox oculto está marcado */
+            #menu-toggle:checked ~ .nav-menu {
+                display: flex;
+            }
+
+            .dropdown {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                border: none;
+                border-left: 2px solid var(--primary-color);
+                margin-left: 1rem;
+                display: none;
+            }
+
+            .nav-item:hover .dropdown {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 1.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ENCABEZADO Y MENÚ DINÁMICO -->
+    <header>
+        <nav class="navbar" aria-label="Navegación principal">
+            <a href="#inicio" class="logo">Tech<span>Solución</span></a>
+
+            <!-- Control táctil para móviles sin JavaScript -->
+            <input type="checkbox" id="menu-toggle">
+            <label for="menu-toggle" class="menu-icon" aria-label="Abrir menú">&#9776;</label>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#inicio" class="nav-link">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#informacion" class="nav-link">Información Básica <span class="arrow">&#9662;</span></a>
+                    <ul class="dropdown">
+                        <li><a href="#informacion">¿Quiénes somos?</a></li>
+                        <li><a href="#informacion">Metodología de trabajo</a></li>
+                        <li><a href="#informacion">Estándares de calidad</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#problemas-soluciones" class="nav-link">Problemas y Soluciones <span class="arrow">&#9662;</span></a>
+                    <ul class="dropdown">
+                        <li><a href="#caso-1">Rendimiento Web Lento</a></li>
+                        <li><a href="#caso-2">Diseño No Adaptable</a></li>
+                        <li><a href="#caso-3">Seguridad y Mantenimiento</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#contacto" class="nav-link">Contacto</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main>
+        <!-- Banner de Bienvenida -->
+        <section id="inicio" class="hero">
+            <h1>Soluciones Claras para Retos Digitales</h1>
+            <p>Estructura limpia, navegación intuitiva y respuestas directas a los inconvenientes más frecuentes en el desarrollo y gestión de proyectos.</p>
+            <a href="#problemas-soluciones" class="btn-primary">Explorar Soluciones</a>
+        </section>
+
+        <!-- Sección 1: Información Básica -->
+        <section id="informacion" class="container">
+            <div class="section-title">
+                <h2>Información Básica</h2>
+                <p>Pilares fundamentales sobre cómo operamos y estructuramos cada proyecto.</p>
+            </div>
+
+            <div class="info-grid">
+                <article class="info-card">
+                    <div class="info-icon">01</div>
+                    <h3>Propósito del Sitio</h3>
+                    <p>Este espacio está diseñado para centralizar documentación clave, ofrecer diagnósticos rápidos y brindar guías prácticas sin distracciones innecesarias.</p>
+                </article>
+
+                <article class="info-card">
+                    <div class="info-icon">02</div>
+                    <h3>Arquitectura Limpia</h3>
+                    <p>Utilizamos estándares web puros (HTML5 semántico y CSS3 moderno) que garantizan tiempos de carga instantáneos y compatibilidad total en cualquier navegador.</p>
+                </article>
+
+                <article class="info-card">
+                    <div class="info-icon">03</div>
+                    <h3>Enfoque Práctico</h3>
+                    <p>Cada concepto teórico está respaldado por una aplicación real, permitiendo identificar fallos comunes y aplicar correcciones efectivas de inmediato.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- Sección 2: Problemas y Soluciones -->
+        <section id="problemas-soluciones" class="solutions-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Problemas y Soluciones</h2>
+                    <p>Diagnósticos frecuentes acompañados de su respectiva resolución técnica.</p>
+                </div>
+
+                <div class="ps-grid">
+                    <!-- Caso 1 -->
+                    <article id="caso-1" class="ps-card">
+                        <div class="problem-box">
+                            <span class="badge-problem">Problema</span>
+                            <h3>Tiempos de carga excesivos</h3>
+                            <p>El sitio tarda demasiado en mostrar contenido debido al exceso de scripts externos y archivos pesados.</p>
+                        </div>
+                        <div class="solution-box">
+                            <span class="badge-solution">Solución</span>
+                            <p>Eliminar dependencias innecesarias, optimizar la estructura CSS y priorizar el renderizado nativo del navegador.</p>
+                            <details>
+                                <summary>Ver detalles técnicos</summary>
+                                <p>Al prescindir de frameworks pesados y usar selectores CSS eficientes, el navegador construye el DOM y CSSOM en milisegundos.</p>
+                            </details>
+                        </div>
+                    </article>
+
+                    <!-- Caso 2 -->
+                    <article id="caso-2" class="ps-card">
+                        <div class="problem-box">
+                            <span class="badge-problem">Problema</span>
+                            <h3>Desbordamiento en pantallas móviles</h3>
+                            <p>Los menús y tablas se cortan o generan desplazamiento horizontal incómodo en teléfonos inteligentes.</p>
+                        </div>
+                        <div class="solution-box">
+                            <span class="badge-solution">Solución</span>
+                            <p>Implementar CSS Grid con <code>auto-fit</code>, unidades relativas y media queries adaptativas.</p>
+                            <details>
+                                <summary>Ver detalles técnicos</summary>
+                                <p>El uso de <code>minmax()</code> permite que las tarjetas se reorganicen automáticamente según el ancho disponible sin romper la maquetación.</p>
+                            </details>
+                        </div>
+                    </article>
+
+                    <!-- Caso 3 -->
+                    <article id="caso-3" class="ps-card">
+                        <div class="problem-box">
+                            <span class="badge-problem">Problema</span>
+                            <h3>Navegación confusa para el usuario</h3>
+                            <p>Los visitantes abandonan la página porque no encuentran rápidamente las secciones de ayuda o contacto.</p>
+                        </div>
+                        <div class="solution-box">
+                            <span class="badge-solution">Solución</span>
+                            <p>Diseñar una barra de navegación fija (sticky) con submenús desplegables claros y anclas directas.</p>
+                            <details>
+                                <summary>Ver detalles técnicos</summary>
+                                <p>Combinar <code>position: sticky</code> con <code>scroll-behavior: smooth</code> mantiene el menú accesible en todo momento.</p>
+                            </details>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER DE CONTACTO -->
+    <footer id="contacto">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4>Sobre este Portal</h4>
+                <p>Plataforma informativa diseñada bajo buenas prácticas de desarrollo web frontend, enfocada en accesibilidad, velocidad y claridad visual.</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Navegación Rápida</h4>
+                <ul class="contact-list">
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#informacion">Información Básica</a></li>
+                    <li><a href="#problemas-soluciones">Problemas y Soluciones</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Información de Contacto</h4>
+                <ul class="contact-list">
+                    <li><strong>Nombre:</strong> Tu Nombre Completo</li>
+                    <li><strong>Correo:</strong> <a href="mailto:contacto@tudominio.com">contacto@tudominio.com</a></li>
+                    <li><strong>Teléfono:</strong> <a href="tel:+50300000000">+503 0000-0000</a></li>
+                    <li><strong>Ubicación:</strong> San Vicente / San Miguel, El Salvador</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Todos los derechos reservados. Diseñado con HTML5 y CSS3 puro.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
